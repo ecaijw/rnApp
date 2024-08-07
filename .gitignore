@@ -1,3 +1,44 @@
+# Node modules
+node_modules/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS
+.DS_Store
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xcworkspace
+*.xccheckout
+*.moved-aside
+DerivedData/
+.idea/
+*.xcuserstate
+
+# Bundler
+/.bundle/
+/vendor/bundle
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Generated files
+package-lock.json
+Gemfile.lock
+
+# React Native
+ios/build/
+android/app/build/
+
+
 # OSX
 #
 .DS_Store
