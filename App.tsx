@@ -6,7 +6,7 @@
  */
 
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Mapbox, {MapView} from "@rnmapbox/maps";
 import type {PropsWithChildren} from 'react';
 import {
@@ -76,10 +76,51 @@ const styles = StyleSheet.create({
   },
 });
 
+const myDataset = [
+  [
+      { x: "01/08", y: 5 },
+      { x: "02/08", y: 2 },
+      { x: "03/08", y: 3 },
+      { x: "04/08", y: 2 },
+      { x: "05/08", y: 1 }
+  ],
+  [
+      { x: "01/08", y: 2 },
+      { x: "02/08", y: 3 },
+      { x: "03/08", y: 4 },
+      { x: "04/08", y: 5 },
+      { x: "05/08", y: 5 }
+  ],
+  [
+      { x: "01/08", y: 1 },
+      { x: "02/08", y: 2 },
+      { x: "03/08", y: 3 },
+      { x: "04/08", y: 4 },
+      { x: "05/08", y: 4 }
+  ]
+];
+function randomizeDataset(dataset: { x: string; y: number; }[][]) {
+  return dataset.map(data => 
+    data.map(datum => ({
+      ...datum,
+      y: Math.floor(Math.random() * 8) + 1  // Randomize y between 1 and 8
+    }))
+  );
+}
+
+
 // export default class App extends Component {
 function App(): React.JSX.Element {
   const [showVictoryChart, setShowVictoryChart] = useState(true);
-  
+  const [dataset, setDataset] = useState(randomizeDataset(myDataset));
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setDataset(randomizeDataset(myDataset));
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
   // Mapbox.setConnected(true);
   Mapbox.setTelemetryEnabled(false);
 
@@ -139,52 +180,6 @@ function App(): React.JSX.Element {
     useShadowColorFromDataset: false // optional
   };
   
-  ////////////////////////////////////////
-  // victory chart
-  const myDataset = [
-    [
-        { x: "01/08", y: 5 },
-        { x: "02/08", y: 2 },
-        { x: "03/08", y: 3 },
-        { x: "04/08", y: 2 },
-        { x: "05/08", y: 1 }
-    ],
-    [
-        { x: "01/08", y: 2 },
-        { x: "02/08", y: 3 },
-        { x: "03/08", y: 4 },
-        { x: "04/08", y: 5 },
-        { x: "05/08", y: 5 }
-    ],
-    [
-        { x: "01/08", y: 1 },
-        { x: "02/08", y: 2 },
-        { x: "03/08", y: 3 },
-        { x: "04/08", y: 4 },
-        { x: "05/08", y: 4 }
-    ]
-  ];
-  
-    // This is an example of a function you might
-    // use to transform your data to make 100% data
-  
-    function transformData(dataset: { x: string; y: number; }[][]) {
-      const totals = dataset[0].map((data, i) => {
-        return dataset.reduce((memo, curr) => {
-          return memo + curr[i].y;
-        }, 0);
-      });
-      return dataset.map((data) => {
-        return data.map((datum, i) => {
-          return { x: datum.x, y: totals[i] };
-        });
-      });
-    }
-  
-    const dataset = transformData(myDataset);
-  ////////////////////////////////////////
-
-
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -201,14 +196,28 @@ function App(): React.JSX.Element {
         </View>
         <View style={styles.container}>
         {showVictoryChart ? (
-          <VictoryChart domainPadding={{ x: 30, y: 20 }}>
-          <VictoryStack
-            colorScale={["#019783", "#7BD4C2", "#E9C060"]}
-          >
-            {dataset.map((data, i) => {
-              return <VictoryBar data={data} key={i}/>;
-            })}
-          </VictoryStack>
+          <VictoryChart domainPadding={{ x: 30, y: 20 }} animate={{ duration: 500 }}>
+            <VictoryStack
+              colorScale={["#019783", "#7BD4C2", "#E9C060"]} // Your color scale here
+            >
+              {dataset.map((data, i) => (
+                <VictoryBar
+                  key={i}
+                  data={data}
+                  style={{ data: { width: 12 } }}
+                  animate={{
+                    onExit: {
+                      duration: 500,
+                      before: () => ({
+                        _y: 0,
+                        fill: "orange",
+                        label: "BYE"
+                      })
+                    }
+                  }}
+                />
+              ))}
+            </VictoryStack>
             <VictoryAxis
               dependentAxis
               tickFormat={(tick) => `${tick}`}
