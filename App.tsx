@@ -6,7 +6,7 @@
  */
 
 
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Mapbox, {MapView} from "@rnmapbox/maps";
 import type {PropsWithChildren} from 'react';
 import {
@@ -18,6 +18,7 @@ import {
   useColorScheme,
   View,
   Dimensions,
+  Button,
 } from 'react-native';
 
 import {
@@ -30,6 +31,10 @@ import {
 import ReactApexChart from 'react-apexcharts';
 import { LineChart } from 'react-native-chart-kit';
 
+import { 
+  VictoryBar, VictoryChart, VictoryTheme,
+  VictoryStack, VictoryAxis, 
+ } from "victory-native";
 
 Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
 
@@ -59,15 +64,22 @@ const styles = StyleSheet.create({
   container: {
     height: 300,
     width: '100%',
-    backgroundColor: "tomato"
+    backgroundColor:  "#f5fcff"
   },
   map: {
     flex: 1
-  }
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 10,
+  },
 });
 
 // export default class App extends Component {
 function App(): React.JSX.Element {
+  const [showVictoryChart, setShowVictoryChart] = useState(true);
+  
   // Mapbox.setConnected(true);
   Mapbox.setTelemetryEnabled(false);
 
@@ -127,6 +139,52 @@ function App(): React.JSX.Element {
     useShadowColorFromDataset: false // optional
   };
   
+  ////////////////////////////////////////
+  // victory chart
+  const myDataset = [
+    [
+        { x: "01/08", y: 5 },
+        { x: "02/08", y: 2 },
+        { x: "03/08", y: 3 },
+        { x: "04/08", y: 2 },
+        { x: "05/08", y: 1 }
+    ],
+    [
+        { x: "01/08", y: 2 },
+        { x: "02/08", y: 3 },
+        { x: "03/08", y: 4 },
+        { x: "04/08", y: 5 },
+        { x: "05/08", y: 5 }
+    ],
+    [
+        { x: "01/08", y: 1 },
+        { x: "02/08", y: 2 },
+        { x: "03/08", y: 3 },
+        { x: "04/08", y: 4 },
+        { x: "05/08", y: 4 }
+    ]
+  ];
+  
+    // This is an example of a function you might
+    // use to transform your data to make 100% data
+  
+    function transformData(dataset: { x: string; y: number; }[][]) {
+      const totals = dataset[0].map((data, i) => {
+        return dataset.reduce((memo, curr) => {
+          return memo + curr[i].y;
+        }, 0);
+      });
+      return dataset.map((data) => {
+        return data.map((datum, i) => {
+          return { x: datum.x, y: totals[i] };
+        });
+      });
+    }
+  
+    const dataset = transformData(myDataset);
+  ////////////////////////////////////////
+
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -137,7 +195,29 @@ function App(): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
-        <View>
+        <View style={styles.buttonContainer}>
+          <Button title="Victory" onPress={() => setShowVictoryChart(true)} />
+          <Button title="Chart-Kit" onPress={() => setShowVictoryChart(false)} />
+        </View>
+        <View style={styles.container}>
+        {showVictoryChart ? (
+          <VictoryChart domainPadding={{ x: 30, y: 20 }}>
+          <VictoryStack
+            colorScale={["#019783", "#7BD4C2", "#E9C060"]}
+          >
+            {dataset.map((data, i) => {
+              return <VictoryBar data={data} key={i}/>;
+            })}
+          </VictoryStack>
+            <VictoryAxis
+              dependentAxis
+              tickFormat={(tick) => `${tick}`}
+            />
+            <VictoryAxis
+              tickFormat={["01/08", "02/08", "03/08", "04/08", "05/08"]}
+            />
+          </VictoryChart>
+        ): (
           <LineChart
             data={data}
             width={screenWidth}
@@ -145,20 +225,8 @@ function App(): React.JSX.Element {
             chartConfig={chartConfig}
             bezier
           />
+        )}
         </View>        
-        {/* <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ReactApexChart
-            options={chartOptions}
-            series={chartOptions.series}
-            type="line"
-            height={350}
-          />
-        </View> */}
         <View style={styles.container}>
           <MapView style={styles.map} />
         </View>
@@ -218,65 +286,3 @@ function Section({children, title}: SectionProps): React.JSX.Element {
     </View>
   );
 }
-
-// function App(): React.JSX.Element {
-//   const isDarkMode = useColorScheme() === 'dark';
-
-//   const backgroundStyle = {
-//     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-//   };
-
-//   return (
-//     <SafeAreaView style={backgroundStyle}>
-//       <StatusBar
-//         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-//         backgroundColor={backgroundStyle.backgroundColor}
-//       />
-//       <ScrollView
-//         contentInsetAdjustmentBehavior="automatic"
-//         style={backgroundStyle}>
-//         <Header />
-//         <View
-//           style={{
-//             backgroundColor: isDarkMode ? Colors.black : Colors.white,
-//           }}>
-//           <Section title="Step One">
-//             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-//             screen and then come back to see your edits.
-//           </Section>
-//           <Section title="See Your Changes">
-//             <ReloadInstructions />
-//           </Section>
-//           <Section title="Debug">
-//             <DebugInstructions />
-//           </Section>
-//           <Section title="Learn More">
-//             Read the docs to discover what to do next:
-//           </Section>
-//           <LearnMoreLinks />
-//         </View>
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
-
-// export default App;
