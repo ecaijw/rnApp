@@ -58,7 +58,7 @@ export const FullScreenMapViewComponent: React.FC<FullScreenMapViewComponentProp
   Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
   const [coordinates] = useState([145.18759999427772, -37.83203894259072]);
   const [longitude, setLongitude] = useState(0);
-  const [globeZoomLevel, setGlobeZoomLevel] = useState(2.0);  // Start with a slightly higher zoom level
+  const [globeZoomLevel, setGlobeZoomLevel] = useState(2.3);  // Start with a slightly higher zoom level
   const globeCameraRef = useRef<Camera>(null);
   const animationRef = useRef<number>();
 
@@ -68,6 +68,7 @@ export const FullScreenMapViewComponent: React.FC<FullScreenMapViewComponentProp
       console.log(`newCoordinates: [${newLongitude}, ${0}`);
       if (globeCameraRef.current) {
         globeCameraRef.current.setCamera({
+          zoomLevel: globeZoomLevel,
           centerCoordinate: [newLongitude, 0], // Only update longitude
           animationDuration: 0, // Ensure smooth continuous movement without sudden stops
         });
