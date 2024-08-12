@@ -11,6 +11,10 @@ import Mapbox, {
   PointAnnotation,
 } from "@rnmapbox/maps";
 
+import {
+  FullScreenMapViewComponent,
+} from "./fullScreenMapViewComponent"
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -48,7 +52,11 @@ export const MapViewComponent = () => {
   const [globeZoomLevel, setGlobeZoomLevel] = useState(2.0);  // Start with a slightly higher zoom level
   const globeCameraRef = useRef<Camera>(null);
 
-  Mapbox.setAccessToken("your-mapbox-access-token");
+  // state to manage modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [fullScreenMap, setFullScreenMap] = useState<'first' | 'globe'>('first');
+
+  Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
 
   useEffect(() => {
     // Disable telemetry when component mounts
@@ -73,6 +81,14 @@ export const MapViewComponent = () => {
     setGlobeZoomLevel(prev => Math.max(prev - 0.5, 1)); // Min zoom level is 1
   };
 
+  // function to handle full screen button click
+  const openFullScreenMap = () => {
+    setIsModalVisible(true);
+  };
+  const closeFullScreenMap = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
@@ -80,6 +96,7 @@ export const MapViewComponent = () => {
         <View style={styles.buttonContainer}>
           <Button title="Zoom In" onPress={zoomIn} />
           <Button title="Zoom Out" onPress={zoomOut} />
+          <Button title="Full Screen" onPress={() => openFullScreenMap('first')} />
         </View>
         <MapView style={styles.map}>
           <Mapbox.Camera 
@@ -109,10 +126,26 @@ export const MapViewComponent = () => {
           <Mapbox.Camera 
             ref={globeCameraRef}
             zoomLevel={globeZoomLevel}  // Controlled by buttons
-            centerCoordinate={[0, 0]}  // Center the globe on the prime meridian
+            centerCoordinate={coordinates}  // Center the globe on the prime meridian
           />
-        </MapView>
-        </View>
+            <PointAnnotation
+              id="unique-id-globe_coordinates"
+              coordinate={coordinates}
+            >
+              <Text style={styles.annotationText}>BZAI</Text>
+            </PointAnnotation>
+          </MapView>
+      </View>
+
+      <View style={styles.container}>
+      {/* Other components and map views */}
+      <Button title="Show Full Screen Map" onPress={openFullScreenMap} />
+
+      <FullScreenMapViewComponent
+        isVisible={isModalVisible}
+        onClose={closeFullScreenMap}
+      />
+    </View>
     </View>
   );
 };
