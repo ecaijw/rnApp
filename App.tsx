@@ -1,14 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-
-import React, { useState,useEffect } from "react";
-import Mapbox, {MapView} from "@rnmapbox/maps";
-import type {PropsWithChildren} from 'react';
+import React, { useState } from "react";
+import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,23 +8,20 @@ import {
   Text,
   useColorScheme,
   View,
-  Dimensions,
   Button,
 } from 'react-native';
 
 import {
   Colors,
-  DebugInstructions,
   Header,
-  LearnMoreLinks,
+  DebugInstructions,
   ReloadInstructions,
+  LearnMoreLinks,
 } from 'react-native/Libraries/NewAppScreen';
 
-import { MapboxDemo } from "./mapboxDemo"; // Import the MapboxDemo component
+import { VictoryChartComponent } from "./VictoryChartComponent";
 import { GitChartComponent } from './ChartGitComponent';
-import { VictoryChartComponent } from "./VictoryChartComponent"; // Import the VictoryChartComponent
-
-Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
+import { MapViewComponent } from "./MapViewComponent";
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -59,12 +47,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5FCFF"
   },
   container: {
-    height: 300,
+    flex: 1,
     width: '100%',
     backgroundColor:  "#f5fcff"
-  },
-  map: {
-    flex: 1
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -73,18 +58,8 @@ const styles = StyleSheet.create({
   },
 });
 
-
-// export default class App extends Component {
 function App(): React.JSX.Element {
-  useEffect(() => {
-      // This will be called once the component is mounted
-      Mapbox.setTelemetryEnabled(false);
-    }, []); // The empty dependency array ensures this effect runs only once
-
   const [showVictoryChart, setShowVictoryChart] = useState(true);
-  // Mapbox.setConnected(true);
-  Mapbox.setTelemetryEnabled(false);
-
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -99,29 +74,27 @@ function App(): React.JSX.Element {
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+        style={backgroundStyle}
+        contentContainerStyle={{ flexGrow: 1 }} // Ensure ScrollView's content is scrollable
+      >
         <Header />
         <View style={styles.buttonContainer}>
           <Button title="Victory" onPress={() => setShowVictoryChart(true)} />
           <Button title="Chart-Kit" onPress={() => setShowVictoryChart(false)} />
         </View>
         <View style={styles.container}>
-        {showVictoryChart ? (
-          <VictoryChartComponent /> 
-        ): (
-          <GitChartComponent />
-        )}
+          {showVictoryChart ? (
+            <VictoryChartComponent />
+          ) : (
+            <GitChartComponent />
+          )}
         </View>        
         <View style={styles.container}>
-          <MapView style={styles.map} />
+          <MapViewComponent />
         </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
+        <View style={[styles.container, { backgroundColor: isDarkMode ? Colors.black : Colors.white }]}>
           <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+            Edit <Text style={styles.highlight}>App.tsx</Text> to change this screen and then come back to see your edits.
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
@@ -141,12 +114,11 @@ function App(): React.JSX.Element {
 
 export default App;
 
-
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+function Section({ children, title }: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -156,7 +128,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
           {
             color: isDarkMode ? Colors.white : Colors.black,
           },
-        ]}>
+        ]}
+      >
         {title}
       </Text>
       <Text
@@ -165,7 +138,8 @@ function Section({children, title}: SectionProps): React.JSX.Element {
           {
             color: isDarkMode ? Colors.light : Colors.dark,
           },
-        ]}>
+        ]}
+      >
         {children}
       </Text>
     </View>
