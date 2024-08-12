@@ -32,6 +32,7 @@ import ReactApexChart from 'react-apexcharts';
 import { LineChart } from 'react-native-chart-kit';
 
 import { VictoryChartComponent } from "./VictoryChartComponent"; // Import the VictoryChartComponent
+import { MapboxDemo } from "./mapboxDemo"; // Import the MapboxDemo component
 
 
 Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
