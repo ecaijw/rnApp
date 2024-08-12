@@ -57,9 +57,33 @@ const styles = StyleSheet.create({
 export const FullScreenMapViewComponent: React.FC<FullScreenMapViewComponentProps> = ({ isVisible, onClose }) => {  // state to manage modal visibility
   Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
   const [coordinates] = useState([145.18759999427772, -37.83203894259072]);
+  const [longitude, setLongitude] = useState(0);
   const [globeZoomLevel, setGlobeZoomLevel] = useState(2.0);  // Start with a slightly higher zoom level
   const globeCameraRef = useRef<Camera>(null);
+  const animationRef = useRef<number>();
 
+  const rotateGlobe = () => {
+    setLongitude(prevLongitude => {
+      const newLongitude = (prevLongitude + 0.3) % 360; // Small incremental update
+      console.log(`newCoordinates: [${newLongitude}, ${0}`);
+      if (globeCameraRef.current) {
+        globeCameraRef.current.setCamera({
+          centerCoordinate: [newLongitude, 0], // Only update longitude
+          animationDuration: 0, // Ensure smooth continuous movement without sudden stops
+        });
+      }
+      return newLongitude;
+    });
+    animationRef.current = requestAnimationFrame(rotateGlobe); // Continue the animation loop
+  };
+  useEffect(() => {
+    if (isVisible) {
+      animationRef.current = requestAnimationFrame(rotateGlobe);
+    } else {
+      cancelAnimationFrame(animationRef.current!); // Stop animation if modal is closed
+    }
+    return () => cancelAnimationFrame(animationRef.current!); // Clean up on unmount
+  }, [isVisible]);
 
 
   return (
@@ -79,7 +103,7 @@ export const FullScreenMapViewComponent: React.FC<FullScreenMapViewComponentProp
             <Mapbox.Camera 
             ref = {globeCameraRef}
             zoomLevel = {globeZoomLevel}
-            centerCoordinate = {coordinates}
+            centerCoordinate={[0, 0]} 
             />
             <PointAnnotation
               id="unique-id-2"
