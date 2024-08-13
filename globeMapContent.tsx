@@ -48,9 +48,19 @@ body { margin: 0; padding: 0; }
       center: [-90, 40]
   });
 
-  map.on('style.load', () => {
-      map.setFog({});
-  });
+    map.on('style.load', () => {
+        map.setFog({});
+    });
+    
+  // Create a DOM element for the marker
+  const markerEl = document.createElement('div');
+  markerEl.className = 'marker';
+  markerEl.innerHTML = 'BZAI';
+
+  // Add marker to the map at the specified coordinates
+  new mapboxgl.Marker(markerEl)
+      .setLngLat([145.18759999427772, -37.83203894259072])
+      .addTo(map);
 
   const secondsPerRevolution = 120;
   const maxSpinZoom = 5;
@@ -73,6 +83,32 @@ body { margin: 0; padding: 0; }
           map.easeTo({ center, duration: 100, easing: (n) => n });
       }
   }
+
+  // Listen for messages from React Native WebView
+  document.addEventListener('message', function(event) {
+      console.log("addEventListener() in html");
+
+      const { lng, lat } = JSON.parse(event.data);
+      map.flyTo({
+          center: [lng, lat],
+          zoom: 10,
+          speed: 3.0
+      });
+
+      
+      // Trigger the spinGlobe function after the flyTo animation completes
+      map.once('moveend', () => {
+        console.log("FlyTo completed, moveend calling spinGlobe()"); // Log to ensure this code runs
+          spinGlobe();
+      });
+
+    // Use setTimeout to ensure spinGlobe is called after flyTo completes
+    setTimeout(() => {
+        console.log("FlyTo completed, setTimeout() calling spinGlobe()"); // Log to ensure this code runs
+        // spinGlobe();
+    }, 1200); // Adjust the delay based on the expected duration of flyTo
+
+    });
 
   // Convert mouse events to touch events for mobile compatibility
   map.on('touchstart', () => {
@@ -117,4 +153,3 @@ body { margin: 0; padding: 0; }
 </body>
 </html>
 `;
-  

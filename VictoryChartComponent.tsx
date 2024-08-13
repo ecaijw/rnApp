@@ -44,14 +44,14 @@ export const VictoryChartComponent = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setDataset(randomizeDataset(myDataset));
-    }, 3000);
+    }, 1500);
 
     return () => clearInterval(intervalId);
   }, []);
 
   return (
     <View style={styles.container}>
-      <VictoryChart domainPadding={{ x: 30, y: 20 }} animate={{ duration: 500 }}>
+      <VictoryChart domainPadding={{ x: 30, y: 20 }} animate={{ duration: 200 }}>
         <VictoryStack colorScale={["#019783", "#7BD4C2", "#E9C060"]}>
           {dataset.map((data, i) => (
             <VictoryBar
@@ -60,7 +60,7 @@ export const VictoryChartComponent = () => {
               style={{ data: { width: 12 } }}
               animate={{
                 onExit: {
-                  duration: 500,
+                  duration: 200,
                   before: () => ({
                     _y: 0,
                     fill: "orange",
