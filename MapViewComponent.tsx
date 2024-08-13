@@ -47,7 +47,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export const MapViewComponent = () => {
+interface MapViewComponentProps {
+  showMoreTesting: boolean;
+}
+
+export const MapViewComponent: React.FC<MapViewComponentProps> = ({ showMoreTesting }) => {
   // map states
   const [coordinates] = useState([145.18759999427772, -37.83203894259072]);
   const [zoomLevel, setZoomLevel] = useState(8);
@@ -89,6 +93,45 @@ export const MapViewComponent = () => {
     setisMapBoxInWebViewVisible(false);
   };
 
+  const moreContent = (
+    <View style={styles.container}>
+      <View style={styles.mapContainer}>
+      <View style={styles.buttonContainer}>
+        <Button title="Zoom In" onPress={zoomIn} />
+        <Button title="Zoom Out" onPress={zoomOut} />
+        <Button title="WebView" onPress={() => openMapBoxInWebViewVisible()} />
+        <Button title="RN MapBox" onPress={() => openRNMapBox()} />
+      </View>
+      <MapView style={styles.map}>
+        <Mapbox.Camera 
+          ref={cameraRef}
+          zoomLevel={zoomLevel}
+          centerCoordinate={coordinates} 
+        />
+        <PointAnnotation 
+          id="unique-id-1"  // Add a unique id here
+          coordinate={coordinates}
+        >
+          <Text style={styles.annotationText}>BZAI</Text>
+        </PointAnnotation>
+      </MapView>
+    </View>
+
+    <View style={styles.container}>
+      <MapBoxInWebViewComponent 
+        isFullScreen = {true}
+        isVisible={isMapBoxInWebViewVisible}
+        onClose={closeMapBoxInWebViewVisible}
+      />
+
+      <FullScreenMapViewComponent
+        isVisible={isRNMapBoxVisible}
+        onClose={closeRNMapBox}
+      />
+    </View>
+  </View>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
@@ -99,40 +142,7 @@ export const MapViewComponent = () => {
         />
       </View>
 
-      <View style={styles.mapContainer}>
-        <View style={styles.buttonContainer}>
-          <Button title="Zoom In" onPress={zoomIn} />
-          <Button title="Zoom Out" onPress={zoomOut} />
-          <Button title="WebView" onPress={() => openMapBoxInWebViewVisible()} />
-          <Button title="RN MapBox" onPress={() => openRNMapBox()} />
-        </View>
-        <MapView style={styles.map}>
-          <Mapbox.Camera 
-            ref={cameraRef}
-            zoomLevel={zoomLevel}
-            centerCoordinate={coordinates} 
-          />
-          <PointAnnotation 
-            id="unique-id-1"  // Add a unique id here
-            coordinate={coordinates}
-          >
-            <Text style={styles.annotationText}>BZAI</Text>
-          </PointAnnotation>
-        </MapView>
-      </View>
-
-      <View style={styles.container}>
-        <MapBoxInWebViewComponent 
-          isFullScreen = {true}
-          isVisible={isMapBoxInWebViewVisible}
-          onClose={closeMapBoxInWebViewVisible}
-        />
-
-        <FullScreenMapViewComponent
-          isVisible={isRNMapBoxVisible}
-          onClose={closeRNMapBox}
-        />
-      </View>
+      {showMoreTesting && moreContent}
     </View>
   );
 };

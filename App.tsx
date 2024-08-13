@@ -93,24 +93,42 @@ function Section({ children, title }: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const [showVictoryChart, setShowVictoryChart] = useState(true);
+  const [showMoreTesting, setShowMoreTesting] = useState(false);
+  const [moreTestingButtonTitle, setmoreTestingButtonTitle] = useState("More Testing");
+  
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const toggleMoreTesting = () => {
+    const currentShowMoreTesting = showMoreTesting;
+    setShowMoreTesting(!currentShowMoreTesting);
+    setmoreTestingButtonTitle(currentShowMoreTesting ? "More Testing Features" : "Less Testing Features");
+  };
+
   return (
     <SafeAreaView style={backgroundStyle}>
+      {showMoreTesting &&
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
-      />
+      />}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}
         contentContainerStyle={{ flexGrow: 1 }} // Ensure ScrollView's content is scrollable
       >
+      {showMoreTesting &&
         <Header />
+      }
+        <View style={styles.container}>
+          <MapViewComponent 
+            showMoreTesting = {showMoreTesting}
+          />
+        </View>
+
         <View style={styles.buttonContainer}>
           <Button title="Victory" onPress={() => setShowVictoryChart(true)} />
           <Button title="Chart-Kit" onPress={() => setShowVictoryChart(false)} />
@@ -122,9 +140,7 @@ function App(): React.JSX.Element {
             <GitChartComponent />
           )}
         </View>        
-        <View style={styles.container}>
-          <MapViewComponent />
-        </View>
+
         <View style={[styles.container, { backgroundColor: isDarkMode ? Colors.black : Colors.white }]}>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this screen and then come back to see your edits.
@@ -139,6 +155,9 @@ function App(): React.JSX.Element {
             Read the docs to discover what to do next:
           </Section>
           <LearnMoreLinks />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title={moreTestingButtonTitle} onPress={() => toggleMoreTesting()} />
         </View>
       </ScrollView>
     </SafeAreaView>
