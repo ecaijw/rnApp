@@ -11,6 +11,7 @@ import { htmlContentForMapBoxInWebView } from "./globeMapContent";
 
 // Define the prop types
 interface MapBoxInWebViewComponentProps {
+  isFullScreen: boolean;
   isVisible: boolean;
   onClose: () => void;
 }
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const MapBoxInWebViewComponent: React.FC<MapBoxInWebViewComponentProps> = ({ isVisible, onClose }) => {
+export const MapBoxInWebViewComponent: React.FC<MapBoxInWebViewComponentProps> = ({ isFullScreen, isVisible, onClose }) => {
   const webViewRef = useRef<WebView>(null);
   const [coordinates] = useState([145.18759999427772, -37.83203894259072]);
 
@@ -53,7 +54,6 @@ export const MapBoxInWebViewComponent: React.FC<MapBoxInWebViewComponentProps> =
 
       let jsCode = "flyToCoordinate();"
       current.injectJavaScript(jsCode);
-
     }
   };
 
@@ -61,26 +61,38 @@ export const MapBoxInWebViewComponent: React.FC<MapBoxInWebViewComponentProps> =
     console.log("Message received from WebView:", event.nativeEvent.data);
   };
 
-  return (
-    <Modal visible={isVisible} animationType="slide" onRequestClose={onClose}>
-      <View style={styles.container}>
-        <View style={styles.buttonContainer}>
-        <Image
-            src = "https://d220yz93drhwe7.cloudfront.net/smp/general/bzai/gsp-app-icon.png"  // Replace with your image URL
-            style={styles.buttonImage}
-          />
-          <Button title="Close WebView" onPress={onClose} />
-          <Button title="Fly to BZAI" onPress={handleFlyToBZAI} />
-        </View>
-        <WebView
-          ref={webViewRef}
-          style={{ flex: 1 }}
-          originWhitelist={['*']}
-          source={{ html: htmlContentForMapBoxInWebView }}
-          javaScriptEnabled={true}
-          onMessage={handleMessage}  // Add onMessage prop to handle communication
-        />
-      </View>
-    </Modal>
+  const closeButton = (
+    <Button title="Close WebView" onPress={onClose} />
   );
+
+  const content = (
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Image
+          source={{ uri: "https://d220yz93drhwe7.cloudfront.net/smp/general/bzai/gsp-app-icon.png" }}  // Use source prop with uri for the image
+          style={styles.buttonImage}
+        />
+        {isFullScreen && closeButton}
+        <Button title="Fly to BZAI" onPress={handleFlyToBZAI} />
+      </View>
+      <WebView
+        ref={webViewRef}
+        style={{ flex: 1 }}
+        originWhitelist={['*']}
+        source={{ html: htmlContentForMapBoxInWebView }}
+        javaScriptEnabled={true}
+        onMessage={handleMessage}  // Add onMessage prop to handle communication
+      />
+    </View>
+  );
+
+  if (isFullScreen) {
+    return (
+      <Modal visible={isVisible} animationType="slide" onRequestClose={onClose}>
+        {content}
+      </Modal>
+    );
+  } else {
+    return content;
+  }
 };

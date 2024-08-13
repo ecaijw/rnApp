@@ -48,20 +48,16 @@ const styles = StyleSheet.create({
 });
 
 export const MapViewComponent = () => {
-  // First map states
+  // map states
   const [coordinates] = useState([145.18759999427772, -37.83203894259072]);
   const [zoomLevel, setZoomLevel] = useState(8);
   const cameraRef = useRef<Camera>(null);
-
-  // Second map (3D Globe) states
-  const [globeZoomLevel, setGlobeZoomLevel] = useState(2.0);  // Start with a slightly higher zoom level
-  const globeCameraRef = useRef<Camera>(null);
 
   // state to manage modal visibility
   const [isRNMapBoxVisible, setIsRNMapBoxVisible] = useState(false);
  
   const [isMapBoxInWebViewVisible, setisMapBoxInWebViewVisible] = useState(false);
-
+  
   Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
 
   useEffect(() => {
@@ -76,15 +72,6 @@ export const MapViewComponent = () => {
 
   const zoomOut = () => {
     setZoomLevel(6);
-  };
-
-  // Zoom functions for the globe map
-  const globeZoomIn = () => {
-    setGlobeZoomLevel(prev => Math.min(prev + 0.5, 10)); // Max zoom level is 10
-  };
-
-  const globeZoomOut = () => {
-    setGlobeZoomLevel(prev => Math.max(prev - 0.5, 1)); // Min zoom level is 1
   };
 
   // function to handle full screen button click
@@ -105,7 +92,14 @@ export const MapViewComponent = () => {
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
-        {/* First Map View */}
+        <MapBoxInWebViewComponent 
+          isFullScreen = {false}
+          isVisible={isMapBoxInWebViewVisible}
+          onClose={closeMapBoxInWebViewVisible}
+        />
+      </View>
+
+      <View style={styles.mapContainer}>
         <View style={styles.buttonContainer}>
           <Button title="Zoom In" onPress={zoomIn} />
           <Button title="Zoom Out" onPress={zoomOut} />
@@ -127,32 +121,9 @@ export const MapViewComponent = () => {
         </MapView>
       </View>
 
-      <View style={styles.mapContainer}>
-        {/* Second Map View (3D Globe) */}
-        <View style={styles.buttonContainer}>
-          <Button title="Globe Zoom In" onPress={globeZoomIn} />
-          <Button title="Globe Zoom Out" onPress={globeZoomOut} />
-        </View>
-        <MapView 
-          style={styles.map}
-          projection="globe"  // Enable globe projection
-        >
-          <Mapbox.Camera 
-            ref={globeCameraRef}
-            zoomLevel={globeZoomLevel}  // Controlled by buttons
-            centerCoordinate={coordinates}  // Center the globe on the prime meridian
-          />
-            <PointAnnotation
-              id="unique-id-globe_coordinates"
-              coordinate={coordinates}
-            >
-              <Text style={styles.annotationText}>BZAI</Text>
-            </PointAnnotation>
-          </MapView>
-      </View>
-
       <View style={styles.container}>
         <MapBoxInWebViewComponent 
+          isFullScreen = {true}
           isVisible={isMapBoxInWebViewVisible}
           onClose={closeMapBoxInWebViewVisible}
         />
