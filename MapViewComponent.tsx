@@ -15,6 +15,11 @@ import {
   FullScreenMapViewComponent,
 } from "./fullScreenMapViewComponent"
 
+import {
+  MapBoxInWebViewComponent,
+} from "./mapBoxInWebViewComponent"
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -53,8 +58,9 @@ export const MapViewComponent = () => {
   const globeCameraRef = useRef<Camera>(null);
 
   // state to manage modal visibility
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [fullScreenMap, setFullScreenMap] = useState<'first' | 'globe'>('first');
+  const [isRNMapBoxVisible, setIsRNMapBoxVisible] = useState(false);
+ 
+  const [isMapBoxInWebViewVisible, setisMapBoxInWebViewVisible] = useState(false);
 
   Mapbox.setAccessToken("pk.eyJ1IjoiZWNhaWp3IiwiYSI6ImNsemoyeng1MTBtOGgyam9idmM5eXhwOXMifQ._03CaeKfpwuM0YWHpXndLg");
 
@@ -82,11 +88,18 @@ export const MapViewComponent = () => {
   };
 
   // function to handle full screen button click
-  const openFullScreenMap = () => {
-    setIsModalVisible(true);
+  const openRNMapBox = () => {
+    setIsRNMapBoxVisible(true);
   };
-  const closeFullScreenMap = () => {
-    setIsModalVisible(false);
+  const closeRNMapBox = () => {
+    setIsRNMapBoxVisible(false);
+  };
+
+  const openMapBoxInWebViewVisible = () => {
+    setisMapBoxInWebViewVisible(true);
+  };
+  const closeMapBoxInWebViewVisible = () => {
+    setisMapBoxInWebViewVisible(false);
   };
 
   return (
@@ -96,7 +109,8 @@ export const MapViewComponent = () => {
         <View style={styles.buttonContainer}>
           <Button title="Zoom In" onPress={zoomIn} />
           <Button title="Zoom Out" onPress={zoomOut} />
-          <Button title="Full Screen" onPress={() => openFullScreenMap('first')} />
+          <Button title="WebView" onPress={() => openMapBoxInWebViewVisible()} />
+          <Button title="RN MapBox" onPress={() => openRNMapBox()} />
         </View>
         <MapView style={styles.map}>
           <Mapbox.Camera 
@@ -138,14 +152,16 @@ export const MapViewComponent = () => {
       </View>
 
       <View style={styles.container}>
-      {/* Other components and map views */}
-      <Button title="Show Full Screen Map" onPress={openFullScreenMap} />
+        <MapBoxInWebViewComponent 
+          isVisible={isMapBoxInWebViewVisible}
+          onClose={closeMapBoxInWebViewVisible}
+        />
 
-      <FullScreenMapViewComponent
-        isVisible={isModalVisible}
-        onClose={closeFullScreenMap}
-      />
-    </View>
+        <FullScreenMapViewComponent
+          isVisible={isRNMapBoxVisible}
+          onClose={closeRNMapBox}
+        />
+      </View>
     </View>
   );
 };
