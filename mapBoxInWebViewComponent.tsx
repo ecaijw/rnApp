@@ -42,10 +42,23 @@ export const MapBoxInWebViewComponent: React.FC<MapBoxInWebViewComponentProps> =
 
   const handleFlyToBZAI = () => {
     // Send the coordinates to the WebView
-    webViewRef.current?.postMessage(JSON.stringify({
-      lng: coordinates[0],
-      lat: coordinates[1]
-    }));
+    console.log("handleFlyToBZAI: start");
+    const current = webViewRef.current
+    if (current) {
+      console.log("handleFlyToBZAI: postMessage");
+      current.postMessage(JSON.stringify({
+        lng: coordinates[0],
+        lat: coordinates[1]
+      }));
+
+      let jsCode = "flyToCoordinate();"
+      current.injectJavaScript(jsCode);
+
+    }
+  };
+
+  const handleMessage = (event: any) => {
+    console.log("Message received from WebView:", event.nativeEvent.data);
   };
 
   return (
@@ -65,6 +78,7 @@ export const MapBoxInWebViewComponent: React.FC<MapBoxInWebViewComponentProps> =
           originWhitelist={['*']}
           source={{ html: htmlContentForMapBoxInWebView }}
           javaScriptEnabled={true}
+          onMessage={handleMessage}  // Add onMessage prop to handle communication
         />
       </View>
     </Modal>

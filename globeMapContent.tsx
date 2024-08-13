@@ -69,7 +69,20 @@ body { margin: 0; padding: 0; }
   let userInteracting = false;
   let spinEnabled = true;
 
-  function spinGlobe() {
+    function flyToCoordinate() {
+        lng = 145.18759999427772;
+        lat = -37.83203894259072;
+        flyTo(lng, lat);
+        // document.getElementById('btn-spin').innerText = "set by rn";
+        window.ReactNativeWebView.postMessage("flyToCoordinate(): called by RN");
+    }
+
+    function showText() {
+        document.getElementById("demo").style.display = "block";
+        window.webkit.messageHandlers.jsHandler.postMessage("trigger from JS");
+    }
+
+    function spinGlobe() {
       const zoom = map.getZoom();
       if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
           let distancePerSecond = 360 / secondsPerRevolution;
@@ -84,11 +97,9 @@ body { margin: 0; padding: 0; }
       }
   }
 
-  // Listen for messages from React Native WebView
-  document.addEventListener('message', function(event) {
-      console.log("addEventListener() in html");
+  function flyTo( lng, lat ) {
+     console.log("addEventListener() in html");
 
-      const { lng, lat } = JSON.parse(event.data);
       map.flyTo({
           center: [lng, lat],
           zoom: 10,
@@ -107,7 +118,14 @@ body { margin: 0; padding: 0; }
         console.log("FlyTo completed, setTimeout() calling spinGlobe()"); // Log to ensure this code runs
         // spinGlobe();
     }, 1200); // Adjust the delay based on the expected duration of flyTo
+  };
 
+  // Listen for messages from React Native WebView
+  document.addEventListener('message', function(event) {
+      // ios app can not reach here. not know why
+        window.ReactNativeWebView.postMessage("after document.addEventListener(), event called by RN");
+       const { lng, lat } = JSON.parse(event.data);
+        flyTo(lng, lat);
     });
 
   // Convert mouse events to touch events for mobile compatibility
