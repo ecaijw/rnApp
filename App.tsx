@@ -22,6 +22,7 @@ import {
 import { VictoryChartComponent } from "./VictoryChartComponent";
 import { GitChartComponent } from './ChartGitComponent';
 import { MapViewComponent } from "./MapViewComponent";
+import { TwrncComponent } from "./TwrncComponent";
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -141,6 +142,11 @@ function App(): React.JSX.Element {
           )}
         </View>        
 
+        <View style={styles.container}>
+          <TwrncComponent />
+        </View>        
+
+        {showMoreTesting &&
         <View style={[styles.container, { backgroundColor: isDarkMode ? Colors.black : Colors.white }]}>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this screen and then come back to see your edits.
@@ -156,6 +162,8 @@ function App(): React.JSX.Element {
           </Section>
           <LearnMoreLinks />
         </View>
+        }
+
         <View style={styles.buttonContainer}>
           <Button title={moreTestingButtonTitle} onPress={() => toggleMoreTesting()} />
         </View>
