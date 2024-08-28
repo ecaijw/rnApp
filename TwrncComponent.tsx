@@ -37,7 +37,7 @@ export const TwrncComponent = () => {
           source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} // Replace with your actual image source
         />
         <View style={tailwind`ml-4`}>
-          <Text style={tailwind`text-xl font-bold text-black`}>ChitChat</Text>
+          <Text style={tailwind`text-xl font-bold text-blue-600`}>ChitChat</Text>
           <Text style={tailwind`text-slate-500`}>You have a new message!</Text>
         </View>
       </View>
