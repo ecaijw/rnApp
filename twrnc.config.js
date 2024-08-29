@@ -1,3 +1,5 @@
+const plugin = require('twrnc/plugin')
+
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -5,6 +7,12 @@ module.exports = {
   presets: [],
   darkMode: 'media', // or 'class'
   theme: {
+    extend: {
+      textColor: {
+        // lukeBlue: '#3b82f6', // or any specific color you want for `text-blue`
+        lukeBlue: '#FF0000', // or any specific color you want for `text-blue`
+      },
+    },
     accentColor: ({ theme }) => ({
       ...theme('colors'),
       auto: 'auto',
@@ -160,6 +168,7 @@ module.exports = {
       fuchsia: colors.fuchsia,
       pink: colors.pink,
       rose: colors.rose,
+      luke: colors.cyan,
     }),
     columns: {
       auto: 'auto',

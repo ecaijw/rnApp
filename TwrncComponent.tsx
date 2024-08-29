@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, View, StyleSheet, Pressable } from "react-native";
 import { Text, TouchableOpacity, Alert } from 'react-native';
 import { Button as MyButton, Image } from 'react-native';
-import tailwind from "twrnc";
+
+import { create } from 'twrnc';
+import customTwrncConfig from './twrnc.config.js';
+const tailwind = create(customTwrncConfig);
+export default tailwind;
 
 const Button = () => {
   return (
@@ -37,7 +41,10 @@ export const TwrncComponent = () => {
           source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} // Replace with your actual image source
         />
         <View style={tailwind`ml-4`}>
-          <Text style={tailwind`text-xl font-bold text-blue-600`}>ChitChat</Text>
+        <Text style={[tailwind`text-xl font-bold`, { color: '#3b82f6' }]}>fallback color</Text>
+        <Text style={tailwind`text-xl font-bold text-lukeBlue`}>text-lukeBlue</Text>
+        <Text style={tailwind`text-xl font-bold text-luke-500`}>text-luke</Text>
+        <Text style={tailwind`text-xl font-bold text-rose-600`}>ChitChat</Text>
           <Text style={tailwind`text-slate-500`}>You have a new message!</Text>
         </View>
       </View>
