@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: '#56A192',  // Set background color
     padding: 10,  // Add padding
+    marginTop: 40,  // Add top margin
     borderRadius: 8,  // Add rounded corners
   },
 });

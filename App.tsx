@@ -57,6 +57,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginVertical: 10,
   },
+  scrollViewContainer: {
+    marginBottom: 50,
+  },
+
+  buttonContainerBottom: {
+    flex: 1,
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center',      // Center content horizontally
+    minHeight: 50,            // Ensure the height doesn't go below 100px
+    marginTop: 10,
+    backgroundColor: '#56A192',  // Set background color
+    borderRadius: 8,            // Add rounded corners
+  },
 });
 
 
@@ -110,17 +123,14 @@ function App(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView  style={{ flex: 1 }} >
       {showMoreTesting &&
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />}
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}
-        contentContainerStyle={{ flexGrow: 1 }} // Ensure ScrollView's content is scrollable
-      >
+      <View style={{ flex: 1}}>
+        <ScrollView style = {styles.scrollViewContainer} >
       {showMoreTesting &&
         <Header />
       }
@@ -142,9 +152,11 @@ function App(): React.JSX.Element {
           )}
         </View>        
 
+        {showMoreTesting &&
         <View style={styles.container}>
           <TwrncComponent />
         </View>        
+        }
 
         {showMoreTesting &&
         <View style={[styles.container, { backgroundColor: isDarkMode ? Colors.black : Colors.white }]}>
@@ -163,11 +175,11 @@ function App(): React.JSX.Element {
           <LearnMoreLinks />
         </View>
         }
-
-        <View style={styles.buttonContainer}>
-          <Button title={moreTestingButtonTitle} onPress={() => toggleMoreTesting()} />
-        </View>
       </ScrollView>
+      <View style={ [styles.buttonContainerBottom, { position: 'absolute', bottom: 0, width: '100%'}]} >
+          <Button title={moreTestingButtonTitle} onPress={() => toggleMoreTesting()} />
+      </View>
+    </View>
     </SafeAreaView>
   );
 }
